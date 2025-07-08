@@ -1,0 +1,30 @@
+[
+  {
+    "user": "example_user_id",
+    "type": "message",
+    "ts": "1751977832.765359",
+    "client_msg_id": "example_client_msg_id",
+    "text": "test1",
+    "team": "example_team",
+    "blocks": [
+      {
+        "type": "rich_text",
+        "block_id": "zGRzn",
+        "elements": [
+          {
+            "type": "rich_text_section",
+            "elements": [
+              {
+                "type": "text",
+                "text": "test1"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "channel": "example_channel",
+    "event_ts": "1751977832.765359",
+    "channel_type": "im"
+  }
+]
