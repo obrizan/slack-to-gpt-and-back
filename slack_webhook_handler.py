@@ -2,6 +2,8 @@ import os
 from flask import Flask, request, jsonify
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
+import ssl
+import certifi
 from openai import OpenAI
 
 SLACK_BOT_TOKEN = os.environ.get("SLACK_BOT_TOKEN")
@@ -10,7 +12,11 @@ OPENAI_PROMPT_ID = os.environ.get("OPENAI_PROMPT_ID")
 OPENAI_PROMPT_VERSION = os.environ.get("OPENAI_PROMPT_VERSION")
 
 app = Flask(__name__)
-slack_client = WebClient(token=SLACK_BOT_TOKEN)
+
+# Use certifi to provide CA certificates for SSL verification
+ssl_context = ssl.create_default_context(cafile=certifi.where())
+slack_client = WebClient(token=SLACK_BOT_TOKEN, ssl=ssl_context)
+
 openai_client = OpenAI()
 
 @app.route("/slack/webhook", methods=["POST"])

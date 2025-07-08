@@ -1,4 +1,5 @@
 flask
 slack_sdk
 openai
+certifi
 pytest==8.4.1
