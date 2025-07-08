@@ -15,6 +15,8 @@ original Slack channel.
    ```bash
    pip install -r requirements.txt
    ```
+   The project uses `certifi` so that SSL requests to Slack work even on
+   systems without global certificate bundles.
 2. Set environment variables:
    - `SLACK_BOT_TOKEN` – Bot token to call Slack APIs.
    - `OPENAI_API_KEY` – API key for OpenAI.
