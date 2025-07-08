@@ -8,8 +8,8 @@ from openai import OpenAI
 
 SLACK_BOT_TOKEN = os.environ.get("SLACK_BOT_TOKEN")
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
-OPENAI_PROMPT_ID = os.environ.get("OPENAI_PROMPT_ID")
-OPENAI_PROMPT_VERSION = os.environ.get("OPENAI_PROMPT_VERSION")
+OPENAI_PROMPT_ID = os.environ["OPENAI_PROMPT_ID"]
+OPENAI_PROMPT_VERSION = os.environ["OPENAI_PROMPT_VERSION"]
 
 app = Flask(__name__)
 
@@ -18,6 +18,7 @@ ssl_context = ssl.create_default_context(cafile=certifi.where())
 slack_client = WebClient(token=SLACK_BOT_TOKEN, ssl=ssl_context)
 
 openai_client = OpenAI()
+
 
 @app.route("/slack/webhook", methods=["POST"])
 def slack_webhook():
@@ -48,15 +49,16 @@ def slack_webhook():
         except SlackApiError:
             pass
 
-    prompt = {
-        "id": OPENAI_PROMPT_ID,
-        "version": OPENAI_PROMPT_VERSION,
-        "input": text,
-    }
     ai_response_text = ""
     try:
-        oa_resp = openai_client.responses.create(prompt=prompt)
-        ai_response_text = getattr(oa_resp, "text", "") or oa_resp.get("text", "")
+        oa_resp = openai_client.responses.create(
+            prompt={
+                "id": OPENAI_PROMPT_ID,
+                "version": OPENAI_PROMPT_VERSION,
+            },
+            input=text,
+        )
+        ai_response_text = oa_resp.output_text
     except Exception as e:
         app.logger.exception("OpenAI responses API call failed")
         ai_response_text = f"Error calling OpenAI: {e}"
@@ -65,6 +67,7 @@ def slack_webhook():
         slack_client.chat_postMessage(channel=channel, text=ai_response_text)
 
     return "ok", 200
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 8000)))
