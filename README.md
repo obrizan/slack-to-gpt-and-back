@@ -26,3 +26,21 @@ original Slack channel.
    ```
 
 The server exposes `/slack/webhook` for Slack to send events.
+
+### Running with Docker
+
+To build and run the application using Docker:
+
+```bash
+# build the image
+docker build -t slack-to-gpt .
+
+# run the container
+# Environment variables listed above must be set
+# 8000 is the default port exposed by the Flask app
+
+docker run -p 8000:8000 -e SLACK_BOT_TOKEN=... -e OPENAI_API_KEY=... \
+  -e OPENAI_PROMPT_ID=... -e OPENAI_PROMPT_VERSION=... slack-to-gpt
+```
+
+The application will be available on `http://localhost:8000/slack/webhook`.
