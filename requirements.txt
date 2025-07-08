@@ -1,3 +1,4 @@
 flask
 slack_sdk
 openai
+pytest==8.4.1
