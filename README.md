@@ -46,3 +46,13 @@ docker run -p 8000:8000 -e SLACK_BOT_TOKEN=... -e OPENAI_API_KEY=... \
 ```
 
 The application will be available on `http://localhost:8000/slack/webhook`.
+
+### Running with Docker Compose
+
+You can also launch the service using `docker-compose`. Create a `.env` file (for example by copying `.example.env`) and populate it with the required environment variables. Then run:
+
+```bash
+docker-compose up --build
+```
+
+The application will be available on `http://localhost:8000/slack/webhook`.
