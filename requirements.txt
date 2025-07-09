@@ -1,5 +1,6 @@
-flask
-slack_sdk
-openai
 certifi
+gunicorn==23.0.0
+Flask==3.1.1
+openai==1.93.1
 pytest==8.4.1
+slack_sdk==3.35.0

@@ -1,10 +1,12 @@
 import os
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, g
+from time import time
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
 import ssl
 import certifi
 from openai import OpenAI
+import logging
 
 SLACK_BOT_TOKEN = os.environ.get("SLACK_BOT_TOKEN")
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
@@ -12,6 +14,34 @@ OPENAI_PROMPT_ID = os.environ["OPENAI_PROMPT_ID"]
 OPENAI_PROMPT_VERSION = os.environ["OPENAI_PROMPT_VERSION"]
 
 app = Flask(__name__)
+
+logging.basicConfig(
+    level=logging.DEBUG,
+    format='[%(asctime)s] %(levelname)s in %(module)s: %(message)s',
+)
+
+@app.before_request
+def log_request_info():
+    g.start_time = time()
+    app.logger.info(
+        "REQUEST:\nMethod: %s\nPath: %s\nHeaders: %s\nBody: %s",
+        request.method,
+        request.path,
+        dict(request.headers),
+        request.get_data(as_text=True)
+    )
+
+@app.after_request
+def log_response_info(response):
+    duration = time() - g.get("start_time", time())
+    app.logger.info(
+        "RESPONSE:\nStatus: %s\nHeaders: %s\nBody: %s\nDuration: %.3f sec",
+        response.status,
+        dict(response.headers),
+        response.get_data(as_text=True),
+        duration
+    )
+    return response
 
 # Use certifi to provide CA certificates for SSL verification
 ssl_context = ssl.create_default_context(cafile=certifi.where())
@@ -25,7 +55,7 @@ def slack_webhook():
     data = request.get_json(force=True)
 
     if isinstance(data, dict) and data.get("type") == "url_verification":
-        return jsonify({"challenge": data.get("challenge")})
+        return data.get("challenge", ""), 200, {"Content-Type": "text/plain"}
 
     event = None
     if isinstance(data, list) and data:

@@ -11,4 +11,4 @@ WORKDIR /app
 
 EXPOSE 8000
 
-CMD ["python", "slack_webhook_handler.py"]
+CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:8000", "slack_webhook_handler:app"]
