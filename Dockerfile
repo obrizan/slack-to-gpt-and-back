@@ -1,4 +1,4 @@
-FROM python:3.13-slim
+FROM python:3.13-alpine
 
 # Install dependencies
 COPY requirements.txt /app/requirements.txt

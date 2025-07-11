@@ -55,7 +55,7 @@ def slack_webhook():
     data = request.get_json(force=True)
 
     if isinstance(data, dict) and data.get("type") == "url_verification":
-        return data.get("challenge", ""), 200, {"Content-Type": "text/plain"}
+        return jsonify({"challenge": data.get("challenge", "")}), 200
 
     event = None
     if isinstance(data, list) and data:
